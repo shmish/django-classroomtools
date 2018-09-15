@@ -1,0 +1,68 @@
+{% extends 'randomizer/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div id="djangorandom">
+                <form action="{% url 'randomizer:random' %}" method="get">
+                    <input class="btn btn-default" type="text" name="group1" id="group1"/>
+                </form>
+
+            </div>
+        </div>
+        
+        <div class="col-md-3">
+            <div id="djangorandom">
+                <form action="{% url 'randomizer:random' %}" method="get">
+                    <input class="btn btn-default" type="text" name="group2" id="group2"/>
+                </form>
+
+            </div>
+        </div>
+        
+        <div class="col-md-5">
+            <div class="btn-to">
+                <button class="btn btn-success" type="submit" id="go">&raquo; Run</button>
+                <button class="btn btn-warning" type="submit" id="stop">&raquo; Random Name</button>
+                <button class="btn btn-warning" id="freezebutton">Group Size:</button>
+                <select class="form-control" type="number" id="freezeGroups" style="max-width:90%;">
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-md-4">
+                <a class="btn btn-default" href="{% url 'randomizer:classroom' %}" role="button">ADD A CLASS</a>
+                <a class="btn btn-default" href="{% url 'randomizer:blocklist' %}" role="button">EDIT A CLASS</a>
+                
+        </div>
+    </div>
+  
+    <div class="row">
+        
+        <div class="col-md-1" id="student-column1"></div>
+        <div class="col-md-1" id="student-column2"></div>  <!-- anchor element for js -->
+        
+        <div class="col-md-10">
+            <div id="student-choice"></div>  <!-- anchor for student choice -->
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock body %}
+
+<div>
+{% block extra_js %}
+    <script>
+        var nameArray = {{ data | safe }};
+    </script>
+     <script type="text/javascript" src="{% static 'randomizer/js/randomizer.js' %}"></script>
+{% endblock extra_js %}
+</div>

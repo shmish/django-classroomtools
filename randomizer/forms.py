@@ -2,6 +2,21 @@ from django import forms
 from django.forms import ModelForm
 from .models import Classroom
 from django.core.exceptions import ValidationError
+from allauth.account.forms import SignupForm
+
+class VSBSignupForm(SignupForm):
+
+    def save(self, request):
+
+        # Ensure you call the parent classes save.
+        # .save() returns a User object.
+        user = super(VSBSignupForm, self).save(request)
+        user.email_address = user.username + "@vsb.bc.ca"
+        user.save()
+        print("hello")
+
+        # You must return the original result.
+        return user
 
 class ClassroomForm(ModelForm):
     class Meta:
