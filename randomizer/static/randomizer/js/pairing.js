@@ -1,11 +1,16 @@
 
-    console.log(typeof(nameArray));
-    console.log(nameArray);
+    var grp1Str = document.getElementsByName('group1').value;
+    var grp2Str = document.getElementsByName('group2').value;
+    console.log(grp1Str);
+    console.log(grp2Str);
 
-    var previousGroups = 0;  // # groups of previous freeze
+    // var grp1Numbers = grp1Str.length;
+    //var grp2Numbers = grp2Str.length;
+    //console.log(grp1Numbers);
+    
+/*    var previousGroups = 0;  // # groups of previous freeze
     var moving = false;
     
-    var numberStudents = nameArray.length;
     var interval;  // for the interval function that scrambles the names
     var attend = [];
     var groupMade = false;
@@ -290,5 +295,5 @@
       
       console.log("Random Group", groupNumber);
     });                
-  
+  */
     

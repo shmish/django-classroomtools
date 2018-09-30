@@ -118,6 +118,25 @@ def random(request):
     return render(request, 'randomizer/randomize.html', context)
 
 @login_required
+def pair(request):
+##    classroom = Classroom.objects.filter(teacher=request.user).order_by('course_block')
+##    classblock = request.GET.get('class_block')
+##    cblock = Classroom.objects.all().filter(course_block=classblock)
+##    cblocknum = cblock.count()
+##    students = Student.objects.all().filter(classroom__course_block=classblock)
+##    nicknames = [s.nickname for s in students]
+##    data = serializers.serialize("json", students, fields = ("nickname", "attend"))
+##    student_names = json.dumps(list(nicknames))
+##    context = {'students': students}
+##    context['classroom'] = classroom
+##    context['cblock'] = cblock
+##    context['student_names'] = student_names
+##    context['cblocknum'] = cblocknum
+##    context['data'] = data
+    template = loader.get_template('randomizer/pairing.html')
+    return render(request, 'randomizer/pairing.html')
+
+@login_required
 def block_delete(request, id):
     obj = get_list_or_404()
     context = {"object": obj}

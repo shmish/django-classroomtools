@@ -12,6 +12,7 @@ urlpatterns = [
     path('blocklist/', list_classroom_view, name='blocklist'),
     path('<int:pk>/blockDelete/', delete_classroom_view, name='blockDelete'),
     path('<int:pk>/blockUpdate/', update_classroom_view, name='blockUpdate'),
+    path('pairing/', views.pair, name='pair'),
 
 ]
 

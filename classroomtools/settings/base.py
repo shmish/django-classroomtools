@@ -53,7 +53,8 @@ ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_EMAIL_REQUIRED = 'true'
 LOGIN_REDIRECT_URL = "/randomizer/"
 ACCOUNT_LOGOUT_REDIRECT_URL = "/accounts/login"
-ACCOUNT_FORMS = {'signup': 'randomizer.forms.VSBSignupForm'}
+#ACCOUNT_FORMS = {'signup': 'randomizer.forms.VSBSignupForm'}
+ACCOUNT_ADAPTER = 'randomizer.adapter.RandomizerAccountAdapter'
 
 
 MIDDLEWARE = [
