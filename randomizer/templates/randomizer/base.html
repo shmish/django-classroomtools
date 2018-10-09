@@ -67,6 +67,7 @@
             <li><a href={% url 'admin:index' %}>Admin</a></li>
             <li><a href={% url 'randomizer:blocklist' %}>Class List</a></li>
             <li><a href={% url 'randomizer:random' %}>Randomize</a></li>
+            <li><a href={% url 'randomizer:pair' %}>Pairings</a></li>
             <li><a href="#">{{request.user.username}}</a></li>
             <li><a href={% url 'account_logout' %}>Log out</a></li>
         {% else %}

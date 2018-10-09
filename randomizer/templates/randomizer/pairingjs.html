@@ -1,0 +1,228 @@
+{% extends 'randomizer/base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <div id="djangorandom">
+            {{ classroom.id }}
+                <form action="{% url 'randomizer:pair' %}" method="get">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <select class="form-control" name="class_block">
+                            {% for room in classroom %}
+                                <option value={{ room.course_block }}>{{ room.get_course_block_display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <!-- <span><input class="btn btn-default" type="submit" value="Submit"></span> -->
+                </form>
+
+            </div>        
+        </div>
+        <div class="col-md-3">
+            <div id="djangorandom">
+            {{ classroom.id }}
+                <form action="{% url 'randomizer:pair' %}" method="get">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <select class="form-control" name="class_block">
+                            {% for room in classroom %}
+                                <option value={{ room.course_block }}>{{ room.get_course_block_display }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <span><input class="btn btn-default" type="submit" value="Submit"></span>
+                </form>
+
+            </div>        
+        </div>
+        <div class="col-md-4">
+                <a class="btn btn-default" href="{% url 'randomizer:classroom' %}" role="button">ADD A CLASS</a>
+                <a class="btn btn-default" href="{% url 'randomizer:blocklist' %}" role="button">EDIT A CLASS</a>
+                
+        </div>
+    </div>
+  
+    <div class="row">
+        
+        <div class="col-md-1" id="student-column1"></div>
+        <div class="col-md-1" id="student-column2"></div>  <!-- anchor element for js -->
+        
+        <div class="col-md-10">
+            <div id="student-pairs"></div>  <!-- anchor for student choice -->
+        </div>
+
+    </div>
+
+
+</div>
+{% endblock body %}
+<!--
+<div>
+{% block extra_js %}
+     //<script type="text/javascript" src="{% static 'randomizer/js/pairing.js' %}"></script>
+     <script>
+     
+        var pair = [];
+        var allStudents = [];
+        var grp1Str = [];
+        var grp2Str = [];
+        var grp1Len = 0;
+        var grp2Len = 0;
+        
+        //first build big list with attend, then use that to get pairs.
+        
+        function onSubmit() {
+            const grp1 = document.getElementsByName('group1')[0].value;
+            const grp2 = document.getElementById('group2').value;
+            
+            // set up the divs
+            var studentChoice = document.getElementById('student-pairs');
+            var studentCol1 = document.getElementById('student-column1');
+            var studentCol2 = document.getElementById('student-column2');
+            const vertGap = 10;
+
+            grp1Str = grp1.split("\n");
+            grp2Str = grp2.split("\n");
+            grp1Len = grp1Str.length;
+            grp2Len = grp2Str.length;
+            allStudents = grp1Str.concat(grp2Str);
+            var attend = [];
+
+            
+            for(var n = 0; n < (allStudents.length-1); n++) {
+                attend[n] = true;
+            };
+
+            
+            
+            
+            console.log("finished");
+            console.log(pair);
+            setNames(grp1Len, grp2Len);
+            
+        }
+                       
+            var setNames = function() {
+                var h = 0;
+                for(var n = 0; n < allStudents.length; n++){   // place the names on the screen
+                    var w = 0;
+                    var divName = "floatName" + n;
+                    //var names = nameArray[n].fields.nickname;
+                    var divTag = document.createElement('div');
+                    divTag.id = divName;
+                    divTag.innerHTML = allStudents[n];
+                    divTag.style.position = "absolute";
+                    if (attend[n] == true) {
+                        divTag.style.textDecoration = "none";
+                    } else {
+                        divTag.style.textDecoration = "line-through";
+                        divTag.style.color = 'red';
+                    };
+                  
+                    h = n - Math.floor(n/grp1Len)*grp1Len;  // go back up to the top of the name column
+                    
+                    divTag.style.top = (10 + h * vertGap) + "px";
+                    //divTag.style.left  = (0 + w) + "px";
+                    divTag.style.fontSize = "14px";
+                    divTag.className = "randomFloat";
+                    divTag.onclick = boldText;
+                     
+                    if (Math.floor(n/grp1Len)+1 == 2) {
+                        studentCol2.appendChild(divTag);
+                    } else {
+                        studentCol1.appendChild(divTag);
+                    // attach to studentCol/'anchor'/parent element
+                    }; 
+                };
+            };
+            
+            $( "#go" ).click(function() {
+                //var pair = [];
+                var larger = [];
+                var smaller = [];
+                var group1 = [];
+                var group2 = [];
+                
+                // get first group that are in attendance
+                for (i=0; i < grp1Len.length; i++) {
+                    if (attend[i] = true) {
+                        group1[i] = grp1Str[i];
+                    };
+                };
+                
+                // get second group that are in attendance
+                for (i=0; i < grp2Len.length; i++) {
+                    if (attend[i] = true) {
+                        group2[i] = grp2Str[i];
+                    }
+                };
+                
+                var more = (group1 - group2);
+                console.log(more);
+                
+                // sort into the larger and smaller group
+                if (more > 0) {
+                    larger = group1;
+                    smaller = group2;
+                } else if (more <0) {
+                    larger = group2;
+                    smaller = group1;
+                    more = more*(-1);
+                }
+            
+                //shuffle the groups
+                larger = shuffle(larger);
+                smaller = shuffle(smaller);
+                // make an array of pairs with extras in groups of three
+                for (var i=0; i < (Math.min(grp1Len,grp2Len)); i++) {
+                    if (more > 0 ) {
+                        pair[i] = smaller[i] + " + " + larger[i] + " + " + larger[smaller.length+more-1];
+                        more --;
+                    } else {
+                        pair[i] = smaller[i] + " + " + larger[i];
+                    };
+                 
+                };
+            });
+            
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
+
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
+
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
+
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
+
+            return array;
+        }; 
+            
+        
+        function boldText(){
+            var togname = this.id.split('floatName').join('');
+            console.log(togname);
+            var nam = allStudents[togname];
+            console.log(nam);
+            if (this.style.textDecoration == 'none') {
+                this.style.textDecoration = 'line-through';
+                this.style.color = 'red';
+                attend[togname] = false;
+            } else {
+                this.style.textDecoration = 'none';
+                this.style.color = 'black';
+                attend[togname] = true;
+            }
+        };
+     </script>
+{% endblock extra_js %}
+</div> -->

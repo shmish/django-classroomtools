@@ -101,17 +101,17 @@ update_classroom_view = BlockUpdateView.as_view()
 def random(request):
     classroom = Classroom.objects.filter(teacher=request.user).order_by('course_block')
     classblock = request.GET.get('class_block')
-    cblock = Classroom.objects.all().filter(course_block=classblock)
-    cblocknum = cblock.count()
+    #cblock = Classroom.objects.all().filter(course_block=classblock)
+    #cblocknum = cblock.count()
     students = Student.objects.all().filter(classroom__course_block=classblock)
     nicknames = [s.nickname for s in students]
     data = serializers.serialize("json", students, fields = ("nickname", "attend"))
     student_names = json.dumps(list(nicknames))
     context = {'students': students}
     context['classroom'] = classroom
-    context['cblock'] = cblock
+    #context['cblock'] = cblock
     context['student_names'] = student_names
-    context['cblocknum'] = cblocknum
+    #context['cblocknum'] = cblocknum
     context['data'] = data
     template = loader.get_template('randomizer/randomize.html')
     print (data)
@@ -119,22 +119,23 @@ def random(request):
 
 @login_required
 def pair(request):
-##    classroom = Classroom.objects.filter(teacher=request.user).order_by('course_block')
-##    classblock = request.GET.get('class_block')
-##    cblock = Classroom.objects.all().filter(course_block=classblock)
-##    cblocknum = cblock.count()
-##    students = Student.objects.all().filter(classroom__course_block=classblock)
-##    nicknames = [s.nickname for s in students]
-##    data = serializers.serialize("json", students, fields = ("nickname", "attend"))
-##    student_names = json.dumps(list(nicknames))
-##    context = {'students': students}
-##    context['classroom'] = classroom
-##    context['cblock'] = cblock
-##    context['student_names'] = student_names
-##    context['cblocknum'] = cblocknum
-##    context['data'] = data
-    template = loader.get_template('randomizer/pairing.html')
-    return render(request, 'randomizer/pairing.html')
+    classroom = Classroom.objects.filter(teacher=request.user).order_by('course_block')
+    classblock1 = request.GET.get('class_block1')
+    classblock2 = request.GET.get('class_block2')
+    students1 = Student.objects.all().filter(classroom__course_block=classblock1)
+    #nicknames1 = [s.nickname for s in students1]
+    data1 = serializers.serialize("json", students1, fields = ("nickname", "attend"))
+    #student_names1 = json.dumps(list(nicknames1))
+    students2 = Student.objects.all().filter(classroom__course_block=classblock2)
+    data2 = serializers.serialize("json", students2, fields = ("nickname", "attend"))
+    context= {'classroom': classroom}
+    context['students1'] = students1
+    context['students2'] = students2
+    context['data1'] = data1
+    context['data2'] = data2
+    print(data1)
+    print(data2)
+    return render(request, 'randomizer/pairing.html', context)
 
 @login_required
 def block_delete(request, id):

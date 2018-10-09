@@ -1,39 +1,54 @@
-
-    var grp1Str = document.getElementsByName('group1').value;
-    var grp2Str = document.getElementsByName('group2').value;
-    console.log(grp1Str);
-    console.log(grp2Str);
-
-    // var grp1Numbers = grp1Str.length;
-    //var grp2Numbers = grp2Str.length;
-    //console.log(grp1Numbers);
     
-/*    var previousGroups = 0;  // # groups of previous freeze
+    // make sure array1 is the longer one
+    if (nameArray1.length >= nameArray2.length) {
+        var arrayTemp = nameArray1;
+        nameArray1 = nameArray2;
+        nameArray2 = arrayTemp;
+    }
+    
+    var group1Len = nameArray1.length;
+    var group2Len = nameArray2.length;
+   
+    nameArray1.forEach(function(e) {
+        e["group"] = "1";
+    });
+    nameArray2.forEach(function(e) {
+        e["group"] = "2";
+    });
+    
+    var numberStudents = group1Len + group2Len;
+    var bothGroups = nameArray1.concat(nameArray2);
+    
+    var attend = [];
+    for(var n = 0; n < numberStudents; n++) {
+        attend[n] = bothGroups[n].fields.attend;
+    };
+           
+    console.log(nameArray1);
+        
+    var previousGroups = 0;  // # groups of previous freeze
     var moving = false;
     
     var interval;  // for the interval function that scrambles the names
-    var attend = [];
+
     var groupMade = false;
     
-    for(var n = 0; n < numberStudents; n++) {
-        attend[n] = nameArray[n].fields.attend;
-        };
+
     var studentCol1 = document.getElementById('student-column1');
     var studentCol2 = document.getElementById('student-column2');
-    var studentChoice = document.getElementById('student-choice');
+    var studentPairs = document.getElementById('student-pairs');
     var vertGap = 30;
     var divChoice = document.createElement('div');                
     divChoice.id = "choicename";
 
     divChoice.innerHTML = " ";
-    studentChoice.appendChild(divChoice);
+    studentPairs.appendChild(divChoice);
 
-    var setNames = function() {
+    var setNames = function(nArray,) {
         var h = 0;
-        for(var n = 0; n < numberStudents; n++){   <!-- place the names on the screen -->
-            var w = 0;
+        for(var n = 0; n < nArray.length; n++){   //place the names on the screen
             var divName = "floatName" + n;
-            var names = nameArray[n].fields.nickname;
+            var names = nArray[n].fields.nickname;
             var divTag = document.createElement('div');
             divTag.id = divName;
             divTag.innerHTML = names;
@@ -44,40 +59,39 @@
                 divTag.style.textDecoration = "line-through";
                 divTag.style.color = 'red';
             };
-          
-            h = n - Math.floor(n/15)*15;  // go back up to the top of the name column
+            if (nArray[n]["group"] == "2") {
+                h = n - group1Len;
+            } else {
+                h = n;
+            }
             
             divTag.style.top = (10 + h * vertGap) + "px";
-            //divTag.style.left  = (0 + w) + "px";
+            //divTag.style.left  = horz + "px";
             divTag.style.fontSize = "14px";
             divTag.className = "randomFloat";
             divTag.onclick = boldText;
              
-            if (Math.floor(n/15)+1 == 2) {
+        if (nArray[n]["group"] == "2") {
                 studentCol2.appendChild(divTag);
             } else {
                 studentCol1.appendChild(divTag);
-             <!-- attach to studentCol/'anchor'/parent element -->
-            }; 
+            };  
         };
     };
-    setNames();
+
+    setNames(bothGroups);
         
     $( "#go" ).click(function() {
-        var N  // number of kids to be grouped after absent kids
-        console.log("it's go time");
         moving = true;
         //clear the previous random name choice if there is one
         var divfc = document.getElementById('choicename');
-        console.log(divfc);
         while(divfc.firstChild) {            
             divfc.removeChild(divfc.firstChild);
         };
         
-        // get the number of kids attending before clearGroups
-        group = grouping(N);
+        //clear the group titles
         if (groupMade == true) {
-            clearGroups(group[0]);
+            clearGroups();
         }
         
         // move the floatNames divs around aka "the scrambler"
@@ -100,14 +114,6 @@
         }, 500);
     });
 
-    $( "#stop" ).click(function() {
-        if (moving == true) {
-            clearInterval(interval);
-            choosePerson(0, numberStudents);
-            setTimeout(clearDivs, 1000);
-        };
-        moving = false;
-    });
     
     var clearDivs = function() {
         for(var i = 0; i < (numberStudents); i++) {
@@ -115,7 +121,7 @@
             var elem = document.getElementById(divn);
             elem.remove();
             };
-        setNames();
+        setNames(bothGroups);
         };
         
     var clearGroups = function() {
@@ -130,31 +136,10 @@
         groupMade = false;
         }; 
         
-        
-    function choosePerson (min, max) {
-        min = Math.ceil(min);
-        max = Math.floor(max);
-        var rn = Math.floor(Math.random() * (max - min)) + min;
-        if (attend[rn] == false) {
-            console.log(rn);
-            console.log("choose again");
-            return choosePerson(0, numberStudents);
-        };
-        divChoice.innerHTML = nameArray[rn].fields.nickname;
-        divChoice.style.position = "relative";
-        divChoice.style.color = "blue";
-        divChoice.style.fontWeight = "bold";
-        divChoice.style.top = "10px";
-        divChoice.style.left = "400px";
-        studentChoice.appendChild(divChoice);
-        console.log(shuffle(numberStudents));
-        };
-                          
+                                 
     function boldText(){
-        var togname = this.id.split('floatName').join('');
+        var togname = this.id.split('floatName').join('');  // get the id # from the element
         console.log(togname);
-        var nam = nameArray[togname];
-        console.log(nam);
         if (this.style.textDecoration == 'none') {
             this.style.textDecoration = 'line-through';
             this.style.color = 'red';
@@ -167,10 +152,10 @@
     };
         
     // knuff-shuffle to mix the list of students
-    function shuffle() {
+    function shuffle(start, finish) {
         var array = [];
-        for (var n=0; n<numberStudents; n++) {
-            array[n-0] = n;
+        for (var n=start; n<finish; n++) {
+            array[n-start] = n;
         }
         var currentIndex = array.length
           , temporaryValue
@@ -193,29 +178,33 @@
         return array;
     }
     
-    function grouping(e) {
+    function grouping() {
         var ns = 0;
+        var nl = 0;
+        var nTotal = 0;
+
         // make sure to not count students that are away
-        for (n=0; n < numberStudents; n++) {
+        // ns number of small list of students after taking into account attendance
+        // nl is the larger list
+        for (n=0; n < group1Len; n++) {
+            if (attend[n] == true) {
+                nl++
+            };
+        };
+        for (n=group1Len; n < numberStudents; n++) {
             if (attend[n] == true) {
                 ns++
             };
         };
         
-        var extras = ns % e;
-        var numGroups = [];
-        var totalGroups = 0;
-        var threeGroups = Math.floor(ns/e);
+        var totalGroups = Math.min(nl,ns);
+        console.log("ns = " + ns);
+        console.log("nl = " + nl);
         
-        if (extras != 0) {
-            totalGroups = threeGroups + 1;
-        } else {
-            totalGroups = threeGroups;
-        }
-        return [totalGroups, ns]; 
+        return [totalGroups, nTotal]; 
     }
     
-    function sort(groupsize) {
+    function sort() {
         var i = 0;
         var sortName  = [];
         var groupNumbers = [];
@@ -226,12 +215,16 @@
         var studentAttend = 0;
         var leftOver = 0;
         
-        // get the random order of students
-        var groups = grouping(groupsize);
+        // shuffle the order of students in separate group
+        // then combine the students into a new total array of kids. This keeps bothGroups[] separate but shuffled.
+        var longOrder = shuffle(0, group1Len);
+        var shortOrder = shuffle(group1Len, numberStudents);
+        var shuffledOrder = longOrder.concat(shortOrder);
+        //console.log(shuffledOrder);
+                
+        // get the number of pairs
+        var groups = grouping();
         previousGroups = groups[0];
-        
-        // shuffle the order of the students
-        var studentOrder = shuffle(nameArray);
         
         // place the group headings
         for (i = 0; i < groups[0]; i++) {
@@ -252,15 +245,14 @@
         
         // fill each row
         for (i = 0; i < numberStudents; i++) {
-            var divName = "floatName" + studentOrder[i];
-            var SO = studentOrder[i];
+            var divName = "floatName" + shuffledOrder[i];
+            var SO = shuffledOrder[i];
             console.log(document.getElementById(divName).parentNode);
             
             if (attend[SO] == true) {
                 var stdId = document.getElementById(divName);
                 stdId.parentNode.id = "studentCol1";
                 studentCol1.appendChild(stdId);
-                studentAttend++;
                 stdId.style.fontSize = "20px";
                 if (placeCount%groups[0] == 0) {  //check to see if we need a new row
                     groupDown = groupDown + 50;
@@ -285,15 +277,14 @@
         } 
     };
     
-    $("#freezebutton").on("click", function() {
+    $("#stop").on("click", function() {
       let groupNumber = $("#freezeGroups").val();
       if (moving == true) {
             clearInterval(interval);
-            setTimeout(sort(groupNumber), 1000);
+            setTimeout(sort, 1000);
         }
        moving = false;
       
       console.log("Random Group", groupNumber);
     });                
-  */
     

@@ -33,6 +33,14 @@ class Classroom(models.Model):
         ('22', 'Block 2-2'),
         ('23', 'Block 2-3'),
         ('24', 'Block 2-4'),
+        ('P11', 'Pair 1-1'),
+        ('P12', 'Pair 1-2'),
+        ('P13', 'Pair 1-3'),
+        ('P14', 'Pair 1-4'),
+        ('P21', 'Pair 2-1'),
+        ('P22', 'Pair 2-2'),
+        ('P23', 'Pair 2-3'),
+        ('P24', 'Pair 2-4'),
     )
     class_list = models.TextField()
     teacher = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
